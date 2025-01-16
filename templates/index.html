@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse des Sentiments YouTube</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* Fixe la navbar en haut de la page */
+        .navbar {
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 15px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            font-size: 18px;
+            color: white;
+            margin-right: 15px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding-top: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 750px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #cc0000;
+        }
+
+        /* Section pour afficher les métadonnées vidéo et le graphique côte à côte */
+        .result-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* Style pour la section vidéo */
+        .video-section {
+            flex: 1;
+            text-align: center;
+        }
+
+        .video-section img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+        }
+
+        /* Style pour le graphique */
+        .chart-section {
+            flex: 1;
+            text-align: center;
+        }
+
+        .chart-section img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .error {
+            color: #d9534f;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .result-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+        <div class="container-fluid">
+            <a href=https://www.youtube.com/results?search_query=best+movie+to+watch target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube Icon" style="width: 25px; margin-right: 5px;">
+               
+            </a>
+        </div>
+        <div class="navbar-nav">
+            <a href="https://github.com/jihanebouramtane" target="_blank">
+                <i class="fab fa-github" style="font-size: 20px;"></i> Mon GitHub
+            </a>
+          
+            
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="container">
+        <h1>Analyse des Sentiments YouTube</h1>
+        <form id="youtubeFormSubmit">
+            <input type="url" name="youtube_url" class="form-control" placeholder="Entrez l'URL de la vidéo YouTube" required>
+            <button type="submit">Analyser</button>
+        </form>
+
+        <!-- Résultats vidéo et graphique -->
+        <div id="result" class="result-container" style="display: none;">
+            <!-- Section vidéo -->
+            <div class="video-section">
+                <h2 id="videoTitle" style="font-size: 20px; color: #555;"></h2>
+                <img id="videoThumbnail" src="" alt="Miniature de la vidéo">
+            </div>
+            <!-- Section graphique -->
+            <div class="chart-section">
+                <img id="sentimentChart" src="" alt="Graphique des sentiments">
+            </div>
+        </div>
+        <div id="error" class="error"></div>
+        <div id="recommendedVideos" class="result-container" style="display: none;">
+            <h3>Vidéos recommandées :</h3>
+            <div id="recommendedVideosList" class="video-list">
+                <!-- Les vidéos recommandées seront insérées ici -->
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.getElementById('youtubeFormSubmit').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+            resultDiv.style.display = 'none';
+            errorDiv.innerHTML = ''; // Réinitialise les erreurs
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Metadonnées de la vidéo
+                    document.getElementById('videoTitle').textContent = data.title;
+                    document.getElementById('videoThumbnail').src = data.thumbnail_url;
+
+                    // Graphique des sentiments
+                    document.getElementById('sentimentChart').src = data.chart_url;
+
+                    // Affiche les résultats
+                    resultDiv.style.display = 'flex';
+                } else {
+                    const error = await response.json();
+                    errorDiv.innerHTML = `Erreur : ${error.error}`;
+                }
+            } catch (error) {
+                errorDiv.innerHTML = 'Une erreur est survenue, veuillez réessayer plus tard.';
+            }
+        });
+    </script>
+</body>
