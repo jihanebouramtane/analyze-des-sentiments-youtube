@@ -45,7 +45,6 @@ matplotlib-inline==0.1.6
 nest-asyncio==1.5.7
 nltk==3.8.1
 numpy==1.25.2
-packaging==23.1
 pandas==2.1.1
 parso==0.8.3
 pillow==10.0.1
@@ -93,7 +92,4 @@ wordcloud==1.9.2
 zope.event==4.6
 zope.interface==5.5.2
 
-# Résolution des conflits
-package_coffee==0.43.0  # Version compatible avec package_water==2.3.1
-package_tea==4.2.0      # Version compatible avec package_water==2.3.1
-package_water==2.3.1    # Version fixée pour éviter les conflits.
+
