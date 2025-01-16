@@ -80,7 +80,7 @@ textblob==0.17.1
 threadpoolctl==3.2.0
 tornado==6.3.3
 tqdm==4.66.1
-traitlets>=5.0,<6
+traitlets==5.9.0  # Version ajustée pour éviter le conflit.
 tzdata==2023.3
 uritemplate==4.1.1
 urllib3==2.0.7
@@ -92,3 +92,8 @@ widgetsnbextension==4.0.7
 wordcloud==1.9.2
 zope.event==4.6
 zope.interface==5.5.2
+
+# Résolution des conflits
+package_coffee==0.43.0  # Version compatible avec package_water==2.3.1
+package_tea==4.2.0      # Version compatible avec package_water==2.3.1
+package_water==2.3.1    # Version fixée pour éviter les conflits.
