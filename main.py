@@ -7,6 +7,9 @@ from googleapiclient.discovery import build
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
 
 # Initialisation Flask
 app = Flask(__name__)
