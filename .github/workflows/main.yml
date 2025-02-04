@@ -1,10 +1,8 @@
 name: Ping Website
 
-# Déclenche le workflow à intervalle régulier (toutes les 10 minutes)
 on:
   schedule:
     - cron: '* * * * *'
-  # Permet également de lancer manuellement le workflow depuis l'interface GitHub
   workflow_dispatch:
 
 jobs:
@@ -15,5 +13,4 @@ jobs:
       - name: Pinger le site web
         run: |
           echo "Pinging website..."
-          # Remplace l'URL par celle du site que tu souhaites pinger
-          curl --max-time 5 -X GET https://analyze-des-sentiments-youtube-1.onrender.com
+          curl --max-time 5 -v -X GET https://analyze-des-sentiments-youtube-1.onrender.com
