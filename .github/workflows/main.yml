@@ -3,7 +3,7 @@ name: Ping Website
 # Déclenche le workflow à intervalle régulier (toutes les 10 minutes)
 on:
   schedule:
-    - cron: '*/1 * * * *'
+    - cron: '* * * * *'
   # Permet également de lancer manuellement le workflow depuis l'interface GitHub
   workflow_dispatch:
 
